@@ -123,6 +123,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     private long last_preview_bitmap_time_ms; // time the last preview_bitmap was updated
     private RefreshPreviewBitmapTask refreshPreviewBitmapTask;
 
+    private String currentSuffix = "";
+
     private boolean want_histogram; // whether to generate a histogram, requires want_preview_bitmap==true
     public enum HistogramType {
         HISTOGRAM_TYPE_RGB,
@@ -4941,7 +4943,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
                         Log.d(TAG, "seamless restart not supported for 3gpp");
                 }
                 else if( has_free_space ) {
-                    VideoFileInfo info = createVideoFile(profile.fileExtension);
+                    VideoFileInfo info = createVideoFile(profile.fileExtension, currentSuffix);
                     // only assign to videoFileInfo after setNextOutputFile in case it throws an exception (in which case,
                     // we don't want to overwrite the current videoFileInfo).
                     if( info != null ) {
@@ -5008,6 +5010,14 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             stopVideo(false);
         }
         applicationInterface.onVideoInfo(what, extra); // call this last, so that toasts show up properly (as we're hogging the UI thread here, and mediarecorder takes time to stop)
+    }
+
+    public String getCurrentSuffix() {
+        return currentSuffix;
+    }
+
+    public void setCurrentSuffix(String currentSuffix) {
+        this.currentSuffix = currentSuffix;
     }
 
     private void onVideoError(int what, int extra) {
@@ -5090,7 +5100,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             Log.d(TAG, "takePicture exit");
     }
 
-    private VideoFileInfo createVideoFile(String extension) {
+    private VideoFileInfo createVideoFile(String extension, String suffix) {
         if( MyDebug.LOG )
             Log.d(TAG, "createVideoFile");
         try {
@@ -5103,7 +5113,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             if( method == ApplicationInterface.VIDEOMETHOD_FILE ) {
     			/*if( true )
     				throw new IOException(); // test*/
-                File videoFile = applicationInterface.createOutputVideoFile(extension);
+                File videoFile = applicationInterface.createOutputVideoFile(extension, suffix);
                 video_filename = videoFile.getAbsolutePath();
                 if( MyDebug.LOG )
                     Log.d(TAG, "save to: " + video_filename);
@@ -5111,7 +5121,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             else {
                 Uri uri;
                 if( method == ApplicationInterface.VIDEOMETHOD_SAF ) {
-                    uri = applicationInterface.createOutputVideoSAF(extension);
+                    uri = applicationInterface.createOutputVideoSAF(extension, suffix);
                 }
                 else {
                     uri = applicationInterface.createOutputVideoUri();
@@ -5140,7 +5150,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
             Log.d(TAG, "startVideoRecording");
         focus_success = FOCUS_DONE; // clear focus rectangle (don't do for taking photos yet)
         final VideoProfile profile = getVideoProfile();
-        VideoFileInfo info = createVideoFile(profile.fileExtension);
+        VideoFileInfo info = createVideoFile(profile.fileExtension, currentSuffix);
         if( info == null ) {
             videoFileInfo = new VideoFileInfo();
             applicationInterface.onFailedCreateVideoFileError();

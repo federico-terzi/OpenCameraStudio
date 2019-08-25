@@ -268,14 +268,14 @@ public class MyApplicationInterface extends BasicApplicationInterface {
     }
 
     @Override
-    public File createOutputVideoFile(String extension) throws IOException {
-        last_video_file = storageUtils.createOutputMediaFile(StorageUtils.MEDIA_TYPE_VIDEO, "", extension, new Date());
+    public File createOutputVideoFile(String extension, String suffix) throws IOException {
+        last_video_file = storageUtils.createOutputMediaFile(StorageUtils.MEDIA_TYPE_VIDEO, suffix, extension, new Date());
         return last_video_file;
     }
 
     @Override
-    public Uri createOutputVideoSAF(String extension) throws IOException {
-        last_video_file_saf = storageUtils.createOutputMediaFileSAF(StorageUtils.MEDIA_TYPE_VIDEO, "", extension, new Date());
+    public Uri createOutputVideoSAF(String extension, String suffix) throws IOException {
+        last_video_file_saf = storageUtils.createOutputMediaFileSAF(StorageUtils.MEDIA_TYPE_VIDEO, suffix, extension, new Date());
         return last_video_file_saf;
     }
 

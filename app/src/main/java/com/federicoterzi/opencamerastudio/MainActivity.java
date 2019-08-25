@@ -5,6 +5,7 @@ import com.federicoterzi.opencamerastudio.cameracontroller.CameraControllerManag
 import com.federicoterzi.opencamerastudio.preview.Preview;
 import com.federicoterzi.opencamerastudio.preview.VideoProfile;
 import com.federicoterzi.opencamerastudio.remotecontrol.BluetoothRemoteControl;
+import com.federicoterzi.opencamerastudio.studio.StudioServer;
 import com.federicoterzi.opencamerastudio.ui.FolderChooserDialog;
 import com.federicoterzi.opencamerastudio.ui.MainUI;
 import com.federicoterzi.opencamerastudio.ui.ManualSeekbars;
@@ -66,6 +67,7 @@ import android.renderscript.RenderScript;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -85,10 +87,14 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.ZoomControls;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /** The main Activity for Open Camera.
  */
 public class MainActivity extends Activity {
     private static final String TAG = "MainActivity";
+    public static final String STUDIO_BROADCAST_ID = "STUDIO_BROADCAST";
 
     private static int activity_count = 0;
 
@@ -106,6 +112,7 @@ public class MainActivity extends Activity {
     private SoundPoolManager soundPoolManager;
     private MagneticSensor magneticSensor;
     private SpeechControl speechControl;
+    private StudioServer studioServer;
 
     private Preview preview;
     private OrientationEventListener orientationEventListener;
@@ -248,6 +255,7 @@ public class MainActivity extends Activity {
         soundPoolManager = new SoundPoolManager(this);
         magneticSensor = new MagneticSensor(this);
         speechControl = new SpeechControl(this);
+        studioServer = new StudioServer(this, 8000);
 
         // determine whether we support Camera2 API
         initCamera2Support();
@@ -992,6 +1000,15 @@ public class MainActivity extends Activity {
 
         preview.onResume();
 
+        try {
+            studioServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(studioCommandReceiver,
+                new IntentFilter(STUDIO_BROADCAST_ID));
+
         if( MyDebug.LOG ) {
             Log.d(TAG, "onResume: total time to resume: " + (System.currentTimeMillis() - debug_time));
         }
@@ -1044,10 +1061,32 @@ public class MainActivity extends Activity {
             createImageSavingNotification();
         }
 
+        studioServer.stop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(studioCommandReceiver);
+
         if( MyDebug.LOG ) {
             Log.d(TAG, "onPause: total time to pause: " + (System.currentTimeMillis() - debug_time));
         }
     }
+
+    private BroadcastReceiver studioCommandReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String data = intent.getStringExtra("data");
+            try {
+                JSONObject obj = new JSONObject(data);
+                String type = obj.getString("type");
+                if (type.equals("start")) {
+                    String name = obj.getString("name");
+                    String suffix = "_"+name.replace(" ", "_")+"_";
+                    preview.setCurrentSuffix(suffix);
+                    takePicture(false);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
