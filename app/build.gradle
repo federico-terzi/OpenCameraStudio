@@ -5,7 +5,7 @@ android {
     compileOptions.encoding = 'UTF-8'
 
     defaultConfig {
-        applicationId "net.sourceforge.opencamera"
+        applicationId "com.federicoterzi.opencamerastudio"
         minSdkVersion 15
         targetSdkVersion 28
 
@@ -14,7 +14,7 @@ android {
         // need build tools at least 20 at least to support ScriptIntrinsicHistogram
         // also need build tools at least 21 to avoid Google Play 64-bit warning (required from 1 August 2019)
 
-        testApplicationId "net.sourceforge.opencamera.test"
+        testApplicationId "com.federicoterzi.opencamerastudio.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
@@ -38,5 +38,6 @@ android {
 
 dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
     testImplementation 'junit:junit:4.12'
 }

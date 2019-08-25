@@ -6,9 +6,9 @@
         android:shortcutShortLabel="@string/action_settings"
         >
         <intent
-            android:action="net.sourceforge.opencamera.SHORTCUT_SETTINGS"
-            android:targetPackage="net.sourceforge.opencamera"
-            android:targetClass="net.sourceforge.opencamera.MainActivity"
+            android:action="com.federicoterzi.opencamerastudio.SHORTCUT_SETTINGS"
+            android:targetPackage="com.federicoterzi.opencamerastudio"
+            android:targetClass="com.federicoterzi.opencamerastudio.MainActivity"
         />
     </shortcut>
     <shortcut
@@ -18,9 +18,9 @@
         android:shortcutShortLabel="@string/gallery"
         >
         <intent
-            android:action="net.sourceforge.opencamera.SHORTCUT_GALLERY"
-            android:targetPackage="net.sourceforge.opencamera"
-            android:targetClass="net.sourceforge.opencamera.MainActivity"
+            android:action="com.federicoterzi.opencamerastudio.SHORTCUT_GALLERY"
+            android:targetPackage="com.federicoterzi.opencamerastudio"
+            android:targetClass="com.federicoterzi.opencamerastudio.MainActivity"
         />
     </shortcut>
     <shortcut
@@ -30,9 +30,9 @@
         android:shortcutShortLabel="@string/record_video"
         >
         <intent
-            android:action="net.sourceforge.opencamera.SHORTCUT_VIDEO"
-            android:targetPackage="net.sourceforge.opencamera"
-            android:targetClass="net.sourceforge.opencamera.MainActivity"
+            android:action="com.federicoterzi.opencamerastudio.SHORTCUT_VIDEO"
+            android:targetPackage="com.federicoterzi.opencamerastudio"
+            android:targetClass="com.federicoterzi.opencamerastudio.MainActivity"
         />
     </shortcut>
     <shortcut
@@ -42,9 +42,9 @@
         android:shortcutShortLabel="@string/selfie"
         >
         <intent
-            android:action="net.sourceforge.opencamera.SHORTCUT_SELFIE"
-            android:targetPackage="net.sourceforge.opencamera"
-            android:targetClass="net.sourceforge.opencamera.MainActivity"
+            android:action="com.federicoterzi.opencamerastudio.SHORTCUT_SELFIE"
+            android:targetPackage="com.federicoterzi.opencamerastudio"
+            android:targetClass="com.federicoterzi.opencamerastudio.MainActivity"
         />
     </shortcut>
     <shortcut
@@ -54,9 +54,9 @@
         android:shortcutShortLabel="@string/camera"
         >
         <intent
-            android:action="net.sourceforge.opencamera.SHORTCUT_CAMERA"
-            android:targetPackage="net.sourceforge.opencamera"
-            android:targetClass="net.sourceforge.opencamera.MainActivity"
+            android:action="com.federicoterzi.opencamerastudio.SHORTCUT_CAMERA"
+            android:targetPackage="com.federicoterzi.opencamerastudio"
+            android:targetClass="com.federicoterzi.opencamerastudio.MainActivity"
         />
     </shortcut>
 </shortcuts>

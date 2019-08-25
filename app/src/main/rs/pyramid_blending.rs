@@ -1,5 +1,5 @@
 #pragma version(1)
-#pragma rs java_package_name(net.sourceforge.opencamera)
+#pragma rs java_package_name(com.federicoterzi.opencamerastudio)
 
 // Setting rs_fp_relaxed causes problems (often in an unstable manner) where blended images
 // come out too bright, seems to be problem with the rhs laplacian, specifically subtractBitmap()
