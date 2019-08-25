@@ -207,6 +207,8 @@ public class DrawPreview {
     private String OSDLine1;
     private String OSDLine2;
 
+    private String currentSuffix = "";
+
     public DrawPreview(MainActivity main_activity, MyApplicationInterface applicationInterface) {
         if( MyDebug.LOG )
             Log.d(TAG, "DrawPreview");
@@ -1009,6 +1011,17 @@ public class DrawPreview {
                 p.getTextBounds(bounds_time_string, 0, bounds_time_string.length(), text_bounds_time);
             }
             int height = applicationInterface.drawTextWithBackground(canvas, p, current_time_string, Color.WHITE, Color.BLACK, location_x, location_y, MyApplicationInterface.Alignment.ALIGNMENT_TOP, null, MyApplicationInterface.Shadow.SHADOW_OUTLINE, text_bounds_time);
+            height += gap_y;
+            if( ui_rotation == 90 ) {
+                location_y -= height;
+            }
+            else {
+                location_y += height;
+            }
+        }
+
+        {
+            int height = applicationInterface.drawTextWithBackground(canvas, p, currentSuffix, Color.WHITE, Color.BLACK, location_x, location_y, MyApplicationInterface.Alignment.ALIGNMENT_TOP, null, MyApplicationInterface.Shadow.SHADOW_OUTLINE, text_bounds_time);
             height += gap_y;
             if( ui_rotation == 90 ) {
                 location_y -= height;
@@ -2557,5 +2570,13 @@ public class DrawPreview {
 
     public boolean getStoredAutoStabilisePref() {
         return this.auto_stabilise_pref;
+    }
+
+    public String getCurrentSuffix() {
+        return currentSuffix;
+    }
+
+    public void setCurrentSuffix(String currentSuffix) {
+        this.currentSuffix = currentSuffix;
     }
 }

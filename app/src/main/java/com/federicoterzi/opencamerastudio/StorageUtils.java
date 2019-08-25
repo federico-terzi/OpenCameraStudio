@@ -299,7 +299,7 @@ public class StorageUtils {
     }
 
     // only valid if !isUsingSAF()
-    String getSaveLocation() {
+    public String getSaveLocation() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getString(PreferenceKeys.getSaveLocationPreferenceKey(), "OpenCamera");
     }
@@ -316,7 +316,7 @@ public class StorageUtils {
         return Uri.parse(folder_name);
     }
 
-    File getSettingsFolder() {
+    public File getSettingsFolder() {
         return new File(context.getExternalFilesDir(null), "backups");
     }
 

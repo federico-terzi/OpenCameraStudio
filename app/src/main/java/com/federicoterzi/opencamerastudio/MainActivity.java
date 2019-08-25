@@ -1076,11 +1076,20 @@ public class MainActivity extends Activity {
             try {
                 JSONObject obj = new JSONObject(data);
                 String type = obj.getString("type");
+                JSONObject opt = obj.optJSONObject("opt");
                 if (type.equals("start")) {
-                    String name = obj.getString("name");
-                    String suffix = "_"+name.replace(" ", "_")+"_";
-                    preview.setCurrentSuffix(suffix);
-                    takePicture(false);
+                    String name = opt.getString("name");
+                    String suffix = "_"+name.replace(" ", "_");
+
+                    if (!preview.isVideoRecording()) {
+                        preview.setCurrentSuffix(suffix);
+                        applicationInterface.getDrawPreview().setCurrentSuffix(suffix);
+                        takePicture(false);
+                    }
+                }else if (type.equals("stop")) {
+                    if (preview.isVideoRecording()) {
+                        takePicture(false);
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
