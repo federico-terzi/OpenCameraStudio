@@ -25,6 +25,22 @@ class StudioServer(val mainActivity: MainActivity, val port : Int) : NanoHTTPD(p
                     return getNotFoundResponse()
                 }
             }
+            "stream" -> {
+                val filename = session.parameters["file"]
+                if (filename != null) {
+                    return downloadVideo(filename[0], forceDownload = false)
+                }else{
+                    return getNotFoundResponse()
+                }
+            }
+            "delete" -> {
+                val filename = session.parameters["file"]
+                if (filename != null) {
+                    return deleteVideo(filename[0])
+                }else{
+                    return getNotFoundResponse()
+                }
+            }
             "start" -> {
                 val name = session.parameters["name"]?.get(0) ?: ""
                 val opt = JSONObject()
@@ -36,13 +52,10 @@ class StudioServer(val mainActivity: MainActivity, val port : Int) : NanoHTTPD(p
                 sendCommand("stop", null)
                 return newFixedLengthResponse("OK")
             }
+            "checkocs" -> {
+                return newFixedLengthResponse("OK")
+            }
         }
-//        val intent = Intent(MainActivity.STUDIO_BROADCAST_ID)
-//        // You can also include some extra data.
-//        intent.putExtra("data", "{\"type\":\"start\",\"name\":\""+path+"\"}");
-//        LocalBroadcastManager.getInstance(mainActivity).sendBroadcast(intent)
-//
-//        Log.d("STUDIO", "Received")
 
         val cacheDir = mainActivity.cacheDir
         val websiteCacheDir = File(cacheDir, "website")
@@ -55,19 +68,33 @@ class StudioServer(val mainActivity: MainActivity, val port : Int) : NanoHTTPD(p
         val resArray = JSONArray()
 
         storageDir.listFiles().forEach { file ->
-            resArray.put(file.name)
+            val obj = JSONObject()
+            obj.put("name", file.name)
+            obj.put("size", file.length())
+            resArray.put(obj)
         }
 
         val res = resArray.toString()+"\n"
         return newFixedLengthResponse(res)
     }
 
-    fun downloadVideo(name: String): Response {
+    fun downloadVideo(name: String, forceDownload: Boolean = true): Response {
         val storageDir = File(mainActivity.storageUtils.saveLocation)
 
         val map = MimeTypeMap.getSingleton();
         val mime = map.getMimeTypeFromExtension(File(name).extension)
-        return serveFile(mapOf(), File(storageDir, name), mime, true)
+        return serveFile(mapOf(), File(storageDir, name), mime, forceDownload)
+    }
+
+    fun deleteVideo(name: String): Response {
+        val storageDir = File(mainActivity.storageUtils.saveLocation)
+        val targetFile = File(storageDir, name)
+        val res = targetFile.delete()
+        return if (res) {
+            newFixedLengthResponse("OK")
+        }else{
+            newFixedLengthResponse("Error")
+        }
     }
 
     fun sendCommand(type: String, opt: JSONObject?) {
