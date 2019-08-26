@@ -44,8 +44,9 @@ class StudioServer(val mainActivity: MainActivity, val port : Int) : NanoHTTPD(p
 //
 //        Log.d("STUDIO", "Received")
 
-        val msg = "<html><body><h1>Open Camera Studio</h1></body></html>\n"
-        return newFixedLengthResponse(msg)
+        val cacheDir = mainActivity.cacheDir
+        val websiteCacheDir = File(cacheDir, "website")
+        return newFixedFileResponse(File(websiteCacheDir, "index.html"), "text/html")
     }
 
     fun listFiles(): Response {

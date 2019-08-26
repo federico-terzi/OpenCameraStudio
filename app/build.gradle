@@ -36,6 +36,9 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     //useLibrary 'android.test.mock'
+
+
+    sourceSets {main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
 dependencies {

@@ -11,8 +11,11 @@ import com.federicoterzi.opencamerastudio.ui.MainUI;
 import com.federicoterzi.opencamerastudio.ui.ManualSeekbars;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +31,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -563,8 +567,50 @@ public class MainActivity extends Activity {
             notificationManager.createNotificationChannel(channel);
         }
 
+        initializeServerFiles();
+
         if( MyDebug.LOG )
             Log.d(TAG, "onCreate: total time for Activity startup: " + (System.currentTimeMillis() - debug_time));
+    }
+
+    public static void copy(InputStream in, File dst) throws IOException {
+        try {
+            OutputStream out = new FileOutputStream(dst);
+            try {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
+    }
+
+    void initializeServerFiles() {
+        AssetManager manager = getAssets();
+        File cacheDir = getCacheDir();
+        File websiteCacheDir = new File(cacheDir, "website");
+
+        if (!websiteCacheDir.exists()) {
+            websiteCacheDir.mkdirs();
+        }
+
+        try {
+            String[] files = manager.list("website");
+
+            for (String file : files) {
+                File output = new File(websiteCacheDir, file);
+                copy(manager.open("website/"+file), output);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /* This method sets the preference defaults which are set specific for a particular device.
